@@ -33,6 +33,8 @@
 
 		<!-- Names the annotated entity class -->
 		<mapping class="org.test.hibernate.dto.Employee" />
+		<mapping class="org.test.hibernate.dto.UserDetails" />
+		<mapping class="org.test.hibernate.dto.Vehicle" />
 
 	</session-factory>
 

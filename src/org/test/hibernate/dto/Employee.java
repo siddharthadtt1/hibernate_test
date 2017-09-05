@@ -2,6 +2,7 @@ package org.test.hibernate.dto;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.AttributeOverride;
@@ -15,9 +16,16 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
+import org.hibernate.annotations.CollectionId;
+import org.hibernate.annotations.GeneratorType;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 @Entity(name = "employee_details")
 public class Employee {
@@ -51,10 +59,14 @@ public class Employee {
 	// @AttributeOverride(name = "city_name", column = @Column(name =
 	// "home_city_name")) })
 	// private Address homeAddress;
-	
-	@ElementCollection
-	private List<Address> addrList = new ArrayList<>();
-	
+
+	@ElementCollection/*(fetch=FetchType.EAGER)*/
+	@JoinTable(name = "emp_addr", joinColumns = @JoinColumn(name = "emp_id_fk"))
+	@GenericGenerator(name = "sequence-gen", strategy = "sequence")
+	@CollectionId(columns = {
+			@Column(name = "addr_id")}, generator = "sequence-gen", type = @Type(type = "long"))
+	private Collection<Address> addrList = new ArrayList<>();
+
 	public int getId() {
 		return id;
 	}
@@ -95,7 +107,7 @@ public class Employee {
 		this.joiningLocation = joiningLocation;
 	}
 
-	public List<Address> getEmpList() {
+	public Collection<Address> getEmpList() {
 		return addrList;
 	}
 
@@ -105,10 +117,11 @@ public class Employee {
 
 	@Override
 	public String toString() {
-		return "Employee [id=" + id + ", name=" + name + ", age=" + age + ", joiningDate=" + joiningDate
-				+ ", joiningLocation=" + joiningLocation + ", empList=" + addrList + "]";
+		return "Employee [id=" + id + ", name=" + name + ", age=" + age
+				+ ", joiningDate=" + joiningDate + ", joiningLocation="
+				+ joiningLocation + ", empList=" + addrList + "]";
 	}
-	
+
 	// public Address getAddress() {
 	// return address;
 	// }
@@ -124,9 +137,7 @@ public class Employee {
 	// public void setHomeAddress(Address homeAddress) {
 	// this.homeAddress = homeAddress;
 	// }
-	
-	
-	
+
 	// @Override
 	// public String toString() {
 	// return "Employee [id=" + id + ", name=" + name + ", age=" + age + ",
